@@ -1,13 +1,14 @@
+import re
+import smtplib
+import time
+from email.mime.text import MIMEText
+import pandas as pd
+from fake_useragent import UserAgent
+from playsound import playsound
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import Select
-from fake_useragent import UserAgent
-from playsound import playsound
-import pandas as pd
-import time
-import re
-import smtplib
-from email.mime.text import MIMEText
+from termcolor import colored
 
 chrome_options = Options()
 
@@ -50,11 +51,10 @@ time_start = time.time()
 
 
 def send_mail(subject, url):
-    msg_from = '161983374@qq.com'  # 发送方邮箱
-    passwd = 'yybemuygyoojbgeb'  # 填入发送方邮箱的授权码
-    msg_to = '2557833850@qq.com'  # 收件人邮箱
+    msg_from = '635527949@qq.com'  # 发送方邮箱
+    passwd = 'bbpshrqlsqecbfab'  # 填入发送方邮箱的授权码
+    msg_to = '635527949@qq.com'  # 收件人邮箱
 
-    # subject = "有"  # 主题
     content = url  # 正文
     msg = MIMEText(content)
     msg['Subject'] = subject
@@ -75,10 +75,11 @@ def send_mail(subject, url):
 
 def search(keys):
     for i in range(len(keys)):
-        url = "https://www.ti.com/store/ti/en/p/product/?p=" + str(keys[i][0])
+        # url = "https://www.ti.com/store/ti/en/p/product/?p=" + str(keys[i][0])
+        # url = "https://www.ti.com/store/ti/zh/p/product/?p=" + str(keys[i][0])
+        url = "https://www.ti.com/store/ti/ja-jp/p/product/?p=" + str(keys[i][0])
         try:
             browser1.get(url)
-            time.sleep(20)
         except:
             print(str(keys[i][0]) + '对应网站的网站打开失败，请检查网络连接！')
             browser1.quit()
@@ -87,8 +88,8 @@ def search(keys):
                 select = Select(browser1.find_element_by_id("llc-cartpage-ship-to-country"))  # 实例化select
                 select.select_by_value('CN')  # 选择第1项选项：value='0'
                 browser1.find_element_by_xpath('//*[@id="llc-cartpage-ship-to-continue"]').click()
-                time.sleep(20)
             try:
+                time.sleep(20)
                 js1 = 'return document.querySelector("#inventoryDiv > span").textContent'
                 Inventory = browser1.execute_script(js1)
             except:
@@ -99,7 +100,7 @@ def search(keys):
                 if len(inventory) != 0:
                     if int(inventory) > 100:
                         playsound('sound.wav')
-                        print(str(keys[i][0]) + ': 库存数量大于100,库存为: ' + number)
+                        print(colored((str(keys[i][0]) + ': 库存数量大于100,库存为: ' + number), 'green', attrs=['bold']))
                         subject = str(keys[i][0]) + '库存数量大于100'
                         send_mail(subject, url)
 
@@ -112,11 +113,11 @@ def search(keys):
                     print('且库存信息为: Out of stock')
                 elif textcontent.replace('\n', '').replace('\r', '') == 'Unavailable':
                     playsound('sound.wav')
-                    print('但库存信息为: Unavailable')
+                    print(colored(('但库存信息为: Unavailable'), 'red', attrs=['bold']))
                     subject = str(keys[i][0]) + '库存信息为Unavailable'
                     send_mail(subject, url)
                 else:
-                    print(textcontent)
+                    pass
 
 while True:
     search(KEYS)
