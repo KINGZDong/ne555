@@ -19,5 +19,5 @@
 
 ### :zap: 安装使用教程
 1. 下载chormedriver，并配置好
-2. 运行8.py
+2. 运行main.py
    
